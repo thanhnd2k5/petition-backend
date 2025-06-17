@@ -35,12 +35,13 @@ executeScheduledTasks()
 
 // Eslint
 if (process.env.__ESLINT__ === 'true') {
-    const command = 'npm'
-    const args = ['run', 'lint:fix', '--silent']
-    const options = {stdio: 'inherit', shell: true}
-    const eslintProcess = spawn(command, args, options)
+    const command = 'npm run lint:fix --silent'
+    const eslintProcess = spawn(command, {
+        stdio: 'inherit',
+        shell: true
+    })
 
-    eslintProcess.on('close', function (code) {
+    eslintProcess.on('close', (code) => {
         if (code !== 0) process.exit(1)
     })
 }
