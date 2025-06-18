@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 export default function createModel(name, collection, definition, options) {
     const schema = new mongoose.Schema(definition, {
-        timestamps: {createdAt: 'created_at'},
+        timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'},
         versionKey: false,
         id: false,
         toJSON: {getters: true, virtuals: true},

@@ -15,15 +15,9 @@ export async function handleWebhook(req, res) {
         // Xử lý webhook
         const payment = await handleSePayWebhook(req.body)
         
-        return res.status(200).json({ 
-            success: true,
-            data: payment
-        })
+        res.jsonify(payment)
     } catch (error) {
         console.error('SePay webhook error:', error)
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || 'Internal server error'
-        })
+        abort(error.status || 500, error.message || 'Lỗi máy chủ nội bộ')
     }
 }

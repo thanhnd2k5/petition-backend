@@ -78,7 +78,7 @@ export async function createPaymentForPrintJob(printJobId, method, session) {
 }
 
 export async function handleSePayWebhook(data) {
-    const { accountNumber, content, transferType, transferAmount } = data
+    const { content, transferType, transferAmount } = data
 
     // Kiểm tra loại giao dịch
     if (transferType !== 'in') {
@@ -105,6 +105,18 @@ export async function handleSePayWebhook(data) {
         { _id: payment.print_job_id },
         { status: PRINT_JOB_STATUS.APPROVED }
     )
+
+    // Emit socket event cho frontend biết payment đã hoàn tất
+    const io = global.app?.get('io')
+    if (io) {
+        io.to(`print_job_${payment.print_job_id}`).emit('payment_status_update', {
+            printJobId: payment.print_job_id,
+            paymentId: payment._id,
+            status: PRINT_JOB_STATUS.APPROVED,
+            verified: true,
+            updatedAt: payment.updatedAt,
+        })
+    }
 
     return payment
 }
