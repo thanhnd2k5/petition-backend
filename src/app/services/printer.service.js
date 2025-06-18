@@ -58,7 +58,7 @@ export async function generatePrinterQR(code) {
         abort(404, 'Máy in không tồn tại')
     }
 
-    const qrContent = `${process.env.APP_URL_CLIENT}/form?printer_code=${code}`
+    const qrContent = `${process.env.APP_URL_CLIENT}/form/${code}`
     const qrCode = await QRCode.toDataURL(qrContent, {
         errorCorrectionLevel: 'H',
         margin: 1,

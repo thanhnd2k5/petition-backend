@@ -14,6 +14,10 @@ const templeSchema = Joi.object({
 })
 
 export const createItem = Joi.object({
+    printer_code: Joi.string()
+        .trim()
+        .required()
+        .label('Mã máy in'),
     phone: Joi.string()
         .trim()
         .required()
@@ -50,9 +54,6 @@ export const createItem = Joi.object({
     priest_name: Joi.string()
         .trim()
         .label('Tên thầy'),
-    printer_id: Joi.string()
-        .required()
-        .label('Máy in'),
     temples: Joi.array()
         .items(templeSchema)
         .min(1)
@@ -91,8 +92,6 @@ export const updateItem = Joi.object({
     priest_name: Joi.string()
         .trim()
         .label('Tên thầy'),
-    printer_id: Joi.string()
-        .label('Máy in'),
     temples: Joi.array()
         .items(templeSchema)
         .min(1)
@@ -100,11 +99,10 @@ export const updateItem = Joi.object({
 })
 
 export const listItems = Joi.object({
-    q: tryValidateOrDefault(Joi.string().trim(), ''),
+    printer_code: tryValidateOrDefault(Joi.string().trim(), ''),
     page: tryValidateOrDefault(Joi.number().integer().min(1), 1),
     per_page: tryValidateOrDefault(Joi.number().integer().min(1).max(100), 50),
     status: tryValidateOrDefault(Joi.string(), ''),
-    printer_id: tryValidateOrDefault(Joi.string(), ''),
     from_date: tryValidateOrDefault(Joi.date(), ''),
     to_date: tryValidateOrDefault(Joi.date(), '')
 })

@@ -7,6 +7,6 @@ const admin = Router()
 
 admin.use('/auth', authRouter)
 admin.use('/roles', roleRouter)
-admin.use('/printers', printer)
+admin.use('/printer', printer)
 
 export default admin
