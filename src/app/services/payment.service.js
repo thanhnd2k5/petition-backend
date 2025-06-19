@@ -79,6 +79,8 @@ export async function createPaymentForPrintJob(printJobId, method, session) {
 
 export async function handleSePayWebhook(data) {
     const { content, transferType, transferAmount } = data
+    
+    const matched = content.match(/SODIEP([a-f0-9]{24})/i)
 
     // Kiểm tra loại giao dịch
     if (transferType !== 'in') {
@@ -86,7 +88,7 @@ export async function handleSePayWebhook(data) {
     }
 
     // Tìm payment theo nội dung chuyển khoản
-    const payment = await Payment.findOne({ content })
+    const payment = await Payment.findOne({ content: matched[0] })
     if (!payment) {
         abort(404, 'Không tìm thấy thông tin thanh toán')
     }
