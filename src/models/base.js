@@ -5,9 +5,20 @@ export default function createModel(name, collection, definition, options) {
         timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'},
         versionKey: false,
         id: false,
-        toJSON: {getters:true, virtuals: true},
+        toJSON: {getters: true, virtuals: true},
         ...(options ?? {}),
     })
+
+    if (options?.virtuals) {
+        for (const [key, def] of Object.entries(options.virtuals)) {
+            if (typeof def.get === 'function' || typeof def.set === 'function') {
+                schema.virtual(key).get(def.get).set(def.set)
+            } else {
+            // assume it's a populate config
+                schema.virtual(key, def)
+            }
+        }
+    }
 
     return mongoose.model(name, schema, collection)
 }
@@ -15,7 +26,7 @@ export default function createModel(name, collection, definition, options) {
 export const {ObjectId} = mongoose.Types
 
 export const ROLE = {
-    SUPER_ADMIN: 'super-admin'
+    SUPER_ADMIN: 'super-admin',
 }
 
 export const PERMISSION = {
@@ -30,23 +41,44 @@ export const PERMISSION = {
     UPDATE_PERMISSION_FOR_ROLE: 'update-permission-for-role',
 }
 
-export const USER_PERMISSION = {
-    // Club management
-    REMOVE_MEMBER: 'remove-member',
-    ACCEPT_MEMBER: 'accept-member'
-}
-
-export const USER_ROLE = {
-    MANAGER: 'club-manager',
-    CENSOR: 'club-censor'
-}
-
 export const STATUS_ACCOUNT = {
     ACTIVE: 'ACTIVE',
     DE_ACTIVE: 'DE_ACTIVE',
 }
 
-export const EVENT_TYPE = {
-    INTERNAL: 'INTERNAL',
-    PUBLIC: 'PUBLIC'
+export const PRINT_JOB_TYPE = {
+    QUOC_NGU: 'quoc_ngu',
+    NHO: 'nho',
+    SONG_NGU: 'song_ngu',
+}
+
+export const INTENTION = {
+    GIA_TIÊN: 'gia_tien',
+    CẦU_AN: 'cau_an',
+    CẦU_TÀI: 'cau_tai',
+    CẦU_LỘC: 'cau_loc',
+    CẦU_DUYÊN: 'cau_duyen',
+    GIẢI_HẠN: 'giai_han',
+    KHÁC: 'khac',
+}
+
+
+export const PREFERRED_PRINT_TYPE = {
+    NOW: 'now',
+    SCHEDULED: 'scheduled',
+}
+
+export const PRINT_JOB_STATUS = {
+    PENDING: 'pending',
+    PRINTED: 'printed',
+}
+
+export const PAYMENT_METHOD = {
+    CASH: 'cash',
+    QR: 'qr',
+}
+
+export const PAYMENT_STATUS = {
+    PENDING: 'pending',
+    PAID: 'paid',
 }

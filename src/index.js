@@ -20,6 +20,9 @@ function createApp() {
     // Init app
     const app = express()
 
+    // Make app globally accessible for Socket.IO
+    global.app = app
+
     app.response.jsonify = jsonify
     app.response.sendMail = sendMail
 

@@ -5,8 +5,6 @@ import permissionTypeSeeder from './permission-type.seeder'
 import permissionGroupSeeder from './permission-group.seeder'
 import permissionSeeder from './permission.seeder'
 import roleSeeder from './role.seeder'
-import userPermissionGroupSeeder from './user-permission-group.seeder'
-import userPermissionSeeder from './user-permission.seeder'
 
 async function seed() {
     await db.transaction(async function (session) {
@@ -16,9 +14,6 @@ async function seed() {
         await permissionSeeder(session)
         await roleSeeder(session)
         await adminSeeder(session)
-        // User
-        await userPermissionGroupSeeder(session)
-        await userPermissionSeeder(session)
         console.log(chalk.bold('Data has been initialized!'))
     })
 }
