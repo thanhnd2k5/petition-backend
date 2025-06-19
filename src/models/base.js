@@ -70,11 +70,15 @@ export const PREFERRED_PRINT_TYPE = {
 
 export const PRINT_JOB_STATUS = {
     PENDING: 'pending',
-    APPROVED: 'approved',
     PRINTED: 'printed',
 }
 
 export const PAYMENT_METHOD = {
     CASH: 'cash',
     QR: 'qr',
+}
+
+export const PAYMENT_STATUS = {
+    PENDING: 'pending',
+    PAID: 'paid',
 }

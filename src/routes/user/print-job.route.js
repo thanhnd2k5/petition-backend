@@ -2,7 +2,7 @@ import { Router } from 'express'
 import validate from '@/app/middleware/user/validate'
 import { createItem, updateItem, listItems } from '@/app/requests/user/print-job.request'
 import * as printJobController from '@/app/controllers/user/print-job.controller'
-import { verifyPrintJobOwnership, verifyPrintJobStatus, validateTempleLimits } from '@/app/middleware/user/print-job'
+import { verifyPrintJobOwnership, verifyPrintJobStatus, validateTempleLimits } from '@/app/middleware/user/print-job.middleware'
 import { asyncHandler } from '@/utils/helpers'
 
 const router = Router()

@@ -57,4 +57,4 @@ export async function deletePrintJobRequest(req, res) {
     const { id } = req.params
     await deletePrintJob(id)
     res.jsonify({ message: 'Xóa yêu cầu in thành công' })
-} 
+}

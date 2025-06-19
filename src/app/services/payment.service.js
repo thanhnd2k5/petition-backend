@@ -1,7 +1,7 @@
 import { PrintJob, Payment } from '@/models'
 import { abort } from '@/utils/helpers'
 import { generateSePayQRCode } from '@/utils/helpers/qr.helper'
-import { PAYMENT_METHOD, PRINT_JOB_STATUS } from '@/models/base'
+import { PAYMENT_METHOD, PAYMENT_STATUS } from '@/models/base'
 
 export async function calculatePaymentAmount(printJobId) {
     const printJob = await PrintJob.findById(printJobId)
@@ -64,7 +64,7 @@ export async function createPaymentForPrintJob(printJobId, method, session) {
         amount: totalAmount,
         qr_code_url,
         content,
-        verified: false
+        verified: PAYMENT_STATUS.PENDING
     }], { session })
 
     // Gắn vào PrintJob
@@ -97,13 +97,12 @@ export async function handleSePayWebhook(data) {
     }
 
     // Cập nhật trạng thái thanh toán
-    payment.verified = true
+    payment.verified = PAYMENT_STATUS.PAID
     await payment.save()
 
     // Cập nhật trạng thái print job
     await PrintJob.findByIdAndUpdate(
-        { _id: payment.print_job_id },
-        { status: PRINT_JOB_STATUS.APPROVED }
+        { _id: payment.print_job_id }
     )
 
     // Emit socket event cho frontend biết payment đã hoàn tất
@@ -112,8 +111,7 @@ export async function handleSePayWebhook(data) {
         io.to(`print_job_${payment.print_job_id}`).emit('payment_status_update', {
             printJobId: payment.print_job_id,
             paymentId: payment._id,
-            status: PRINT_JOB_STATUS.APPROVED,
-            verified: true,
+            verified: PAYMENT_STATUS.PAID,
             updatedAt: payment.updatedAt,
         })
     }
@@ -128,6 +126,23 @@ export async function getPaymentById(id) {
     if (!payment) {
         abort(404, 'Không tìm thấy thông tin thanh toán')
     }
+
+    return payment
+}
+
+export async function updatePaymentVerification(paymentId, status) {
+    const payment = await Payment.findById(paymentId)
+    if (!payment) {
+        abort(404, 'Không tìm thấy thông tin thanh toán')
+    }
+
+    // Validate status
+    if (!Object.values(PAYMENT_STATUS).includes(status)) {
+        abort(400, 'Trạng thái thanh toán không hợp lệ')
+    }
+
+    payment.verified = PAYMENT_STATUS.PAID
+    await payment.save()
 
     return payment
 }

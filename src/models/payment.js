@@ -1,4 +1,4 @@
-import createModel, {PAYMENT_METHOD} from './base'
+import createModel, {PAYMENT_METHOD, PAYMENT_STATUS} from './base'
 
 const Payment = createModel('Payment', 'payments', {
     print_job_id: {
@@ -22,8 +22,9 @@ const Payment = createModel('Payment', 'payments', {
         type: String,
     },
     verified: {
-        type: Boolean,
-        default: false,
+        type: String,
+        enum: Object.values(PAYMENT_STATUS),
+        default: PAYMENT_STATUS.PENDING,
     },
     created_at: {
         type: Date,
