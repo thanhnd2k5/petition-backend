@@ -45,7 +45,7 @@ export async function createPaymentForPrintJob(printJobId, method, session) {
     const { totalAmount } = await calculatePaymentAmount(printJobId)
 
     // Tạo nội dung chuyển khoản
-    const content = `SODIEP-${printJobId}`
+    const content = `SODIEP${printJobId}`
 
     // Tạo QR code nếu phương thức là QR
     let qr_code_url = null
