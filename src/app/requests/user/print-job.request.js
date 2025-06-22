@@ -25,6 +25,7 @@ export const createItem = Joi.object({
         .label('Số điện thoại'),
     address: Joi.string()
         .trim()
+        .allow('', null)
         .label('Địa chỉ'),
     type: Joi.string()
         .required()
@@ -53,6 +54,7 @@ export const createItem = Joi.object({
         .label('Ý nguyện'),
     priest_name: Joi.string()
         .trim()
+        .allow('', null)
         .label('Tên thầy'),
     temples: Joi.array()
         .items(templeSchema)
@@ -68,6 +70,7 @@ export const updateItem = Joi.object({
         .label('Số điện thoại'),
     address: Joi.string()
         .trim()
+        .allow('', null)
         .label('Địa chỉ'),
     type: Joi.string()
         .label('Loại sớ'),
@@ -91,6 +94,7 @@ export const updateItem = Joi.object({
         .label('Ý nguyện'),
     priest_name: Joi.string()
         .trim()
+        .allow('', null)
         .label('Tên thầy'),
     temples: Joi.array()
         .items(templeSchema)
