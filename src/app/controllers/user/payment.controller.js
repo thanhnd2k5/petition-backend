@@ -1,5 +1,6 @@
 import { createPaymentForPrintJob, calculatePaymentAmount } from '@/app/services/payment.service'
 import { abort } from '@/utils/helpers'
+import { db } from '@/configs'
 
 export async function createPayment(req, res) {
     const { print_job_id, method } = req.body
@@ -8,7 +9,9 @@ export async function createPayment(req, res) {
         abort(400, 'Thiếu thông tin print_job_id')
     }
 
-    const payment = await createPaymentForPrintJob(print_job_id, method)
+    const payment = await db.transaction(async function (session) {
+        return await createPaymentForPrintJob(print_job_id, method, session)
+    })
     res.jsonify(payment)
 }
 

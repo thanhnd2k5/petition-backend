@@ -2,6 +2,7 @@ import { createPrintJob, getPrintJobById, listPrintJobs, updatePrintJob, deleteP
 import { getPrinterByCode } from '@/app/services/printer.service'
 import {calculatePaymentAmount} from '@/app/services/payment.service'
 import { abort } from '@/utils/helpers'
+import { db } from '@/configs'
 
 export async function createPrintJobRequest(req, res) {
     const { printer_code } = req.body
@@ -19,12 +20,14 @@ export async function createPrintJobRequest(req, res) {
         status: 'pending'
     }
 
-    const printJob = await createPrintJob(data)
+    const printJob = await db.transaction(async function (session) {
+        return await createPrintJob(data, session)
+    })
     res.jsonify(printJob)
 }
 
 export async function getPrintJobDetails(req, res) {
-    const { id } = req.params
+    const id = req.printJob._id
     const printJob = await getPrintJobById(id)
     const totalAmount = await calculatePaymentAmount(id)
     res.jsonify({totalAmount, printJob})
@@ -48,13 +51,17 @@ export async function listPrintJobRequests(req, res) {
 }
 
 export async function updatePrintJobRequest(req, res) {
-    const { id } = req.params
-    const printJob = await updatePrintJob(id, req.body)
+    const id = req.printJob._id
+    const printJob = await db.transaction(async function (session) {
+        return await updatePrintJob(id, req.body, session)
+    })
     res.jsonify(printJob)
 }
 
 export async function deletePrintJobRequest(req, res) {
-    const { id } = req.params
-    await deletePrintJob(id)
-    res.jsonify({ message: 'Xóa yêu cầu in thành công' })
+    const id = req.printJob._id
+    const printJob = await db.transaction(async function (session) {
+        return await deletePrintJob(id, session)
+    })
+    res.jsonify(printJob)
 }

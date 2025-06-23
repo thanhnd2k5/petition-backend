@@ -2,9 +2,10 @@ import { getPrintJobById, listPrintJobs, updatePrintJob, deletePrintJob, getPrin
 import { getPrinterByCode } from '@/app/services/printer.service'
 import {calculatePaymentAmount} from '@/app/services/payment.service'
 import { abort } from '@/utils/helpers'
+import { db } from '@/configs'
 
 export async function getPrintJobDetails(req, res) {
-    const { id } = req.params
+    const id = req.printJob._id
     const printJob = await getPrintJobById(id)
     const totalAmount = await calculatePaymentAmount(id)
     res.jsonify({totalAmount, printJob})
@@ -28,20 +29,24 @@ export async function listPrintJobRequests(req, res) {
 }
 
 export async function updatePrintJobRequest(req, res) {
-    const { id } = req.params
-    const printJob = await updatePrintJob(id, req.body)
+    const id = req.printJob._id
+    const printJob = await db.transaction(async function (session) {
+        return await updatePrintJob(id, req.body, session)
+    })
     res.jsonify(printJob)
 }
 
 export async function deletePrintJobRequest(req, res) {
-    const { id } = req.params
-    await deletePrintJob(id)
-    res.jsonify({ message: 'Xóa yêu cầu in thành công' })
+    const id = req.printJob._id
+    const printJob = await db.transaction(async function (session) {
+        return await deletePrintJob(id, session)
+    })
+    res.jsonify(printJob)
 }
 
 export async function getPrintJobsByStatusRequest(req, res) {
     let { status } = req.query
-    if (!status) return res.status(400).json({ message: 'Thiếu tham số status' })
+    if (!status) abort(400, 'Thiếu tham số status')
     // Hỗ trợ status là mảng hoặc chuỗi
     if (typeof status === 'string' && status.includes(',')) {
         status = status.split(',')

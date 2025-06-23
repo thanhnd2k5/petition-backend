@@ -1,5 +1,6 @@
 import { handleSePayWebhook } from '@/app/services/payment.service'
 import { abort } from '@/utils/helpers'
+import { db } from '@/configs'
 
 export async function handleWebhook(req, res) {
     try {
@@ -13,8 +14,9 @@ export async function handleWebhook(req, res) {
         // }
 
         // Xử lý webhook
-        const payment = await handleSePayWebhook(req.body)
-        
+        const payment = await db.transaction(async function (session) {
+            return await handleSePayWebhook(req.body, session)
+        })
         res.jsonify(payment)
     } catch (error) {
         console.error('SePay webhook error:', error)

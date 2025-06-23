@@ -2,10 +2,10 @@ import * as printerService from '@/app/services/printer.service'
 import { db } from '@/configs'
 
 export async function createItem(req, res) {
-    await db.transaction(async function (session) {
-        const printer = await printerService.createPrinter(req.body, session)
-        res.status(201).jsonify(printer)
+    const printer = await db.transaction(async function (session) {
+        return await printerService.createPrinter(req.body, session)
     })
+    res.status(201).jsonify(printer)
 }
 
 export async function listItems(req, res) {
@@ -19,17 +19,17 @@ export async function getItem(req, res) {
 }
 
 export async function updateItem(req, res) {
-    await db.transaction(async function (session) {
-        await printerService.updatePrinter(req.params.id, req.body, session)
-        res.status(201).jsonify()
+    const printer = await db.transaction(async function (session) {
+        return await printerService.updatePrinter(req.params.id, req.body, session)
     })
+    res.status(201).jsonify(printer)
 }
 
 export async function deleteItem(req, res) {
-    await db.transaction(async function (session) {
-        await printerService.deletePrinter(req.params.id, session)
-        res.jsonify()
+    const printer = await db.transaction(async function (session) {
+        return await printerService.deletePrinter(req.params.id, session)
     })
+    res.jsonify(printer)
 }
 
 export async function getItemByCode(req, res) {
