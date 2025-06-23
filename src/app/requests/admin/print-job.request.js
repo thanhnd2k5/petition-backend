@@ -34,7 +34,8 @@ export const createItem = Joi.object({
     offering_date: Joi.date()
         .required()
         .min('now')
-        .label('Ngày cúng'),
+        .label('Ngày cúng')
+        .allow('', null),
     preferred_type: Joi.string()
         .required()
         .label('Loại in ưa thích'),
@@ -43,7 +44,7 @@ export const createItem = Joi.object({
         .when('preferred_type', {
             is: 'scheduled',
             then: Joi.required(),
-            otherwise: Joi.optional()
+            otherwise: Joi.valid(null)
         })
         .label('Thời gian in'),
     people_text: Joi.string()
@@ -77,7 +78,8 @@ export const updateItem = Joi.object({
         .label('Loại sớ'),
     offering_date: Joi.date()
         .min('now')
-        .label('Ngày cúng'),
+        .label('Ngày cúng')
+        .allow('', null),
     preferred_type: Joi.string()
         .label('Loại in ưa thích'),
     scheduled_at: Joi.date()
@@ -85,7 +87,7 @@ export const updateItem = Joi.object({
         .when('preferred_type', {
             is: 'scheduled',
             then: Joi.required(),
-            otherwise: Joi.optional()
+            otherwise: Joi.valid(null)
         })
         .label('Thời gian in'),
     people_text: Joi.string()
