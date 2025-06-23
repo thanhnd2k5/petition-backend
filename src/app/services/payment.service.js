@@ -132,18 +132,18 @@ export async function getPaymentById(id) {
     return payment
 }
 
-export async function updatePaymentVerification(paymentId, status) {
+export async function updatePaymentVerification(paymentId, verified) {
     const payment = await Payment.findById(paymentId)
     if (!payment) {
         abort(404, 'Không tìm thấy thông tin thanh toán')
     }
 
     // Validate status
-    if (!Object.values(PAYMENT_STATUS).includes(status)) {
+    if (!Object.values(PAYMENT_STATUS).includes(verified)) {
         abort(400, 'Trạng thái thanh toán không hợp lệ')
     }
 
-    payment.verified = PAYMENT_STATUS.PAID
+    payment.verified = verified
     await payment.save()
 
     return payment
